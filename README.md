@@ -64,29 +64,24 @@
 ## ⚙️ 설치 방법
 
 ### 1. Hardhat 프로젝트 초기화
-```bash
 npm init -y
 npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox
 
 
 2. OpenZeppelin (Advanced 버전에 필요)
-```bash
 npm install @openzeppelin/contracts
 
 
 ## ⚙️ 실행 방법 (VSCode / Hardhat)
 
 컴파일
-```bash
 npx hardhat compile
 
 
 테스트 실행
-```bash
 npx hardhat test
 
 로컬 배포 (선택)
-```bash
 npx hardhat node      # 터미널1: 로컬 네트워크 실행
 npx hardhat run scripts/deploy.js --network localhost   # 터미널2: 배포
 
