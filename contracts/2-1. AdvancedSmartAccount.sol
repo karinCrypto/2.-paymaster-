@@ -1,3 +1,6 @@
+// 주석 버전 입니다. 이해가 어려우신분은
+//문법 설명 + 기능 설명을 같이 달아서 Solidity 문법 공부 + 4337 이해를 동시에 할 수 있게 준비했어요.
+
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
