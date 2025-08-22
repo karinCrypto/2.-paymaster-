@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v4.9/contracts/utils/cryptography/ECDSA.sol";
 
 interface IEntryPoint {
     function depositTo(address account) external payable;
@@ -11,27 +11,13 @@ interface IEntryPoint {
 contract AdvancedSmartAccount {
     using ECDSA for bytes32;
 
-    address[] public owners;
-    mapping(address => bool) public isOwner;
-    uint256 public requiredSignatures;
-
+    address public owner;
     IEntryPoint public entryPoint;
 
-    constructor(address _entryPoint, address[] memory _owners, uint256 _required) {
-        require(_owners.length > 0, "At least 1 owner required");
-        require(_required > 0 && _required <= _owners.length, "Invalid required number");
-
+    constructor(address _entryPoint, address _owner) {
+        require(_owner != address(0), "Invalid owner");
+        owner = _owner;
         entryPoint = IEntryPoint(_entryPoint);
-
-        for (uint256 i = 0; i < _owners.length; i++) {
-            address owner = _owners[i];
-            require(owner != address(0), "Invalid owner");
-            require(!isOwner[owner], "Duplicate owner");
-            isOwner[owner] = true;
-            owners.push(owner);
-        }
-
-        requiredSignatures = _required;
     }
 
     modifier onlyEntryPoint() {
@@ -41,32 +27,11 @@ contract AdvancedSmartAccount {
 
     function validateUserOp(
         bytes32 userOpHash,
-        bytes[] calldata signatures,
+        bytes calldata signature,
         uint256 missingFunds
     ) external payable onlyEntryPoint returns (uint256) {
-        require(signatures.length >= requiredSignatures, "Not enough signatures");
-
-        uint256 validCount = 0;
-        address[] memory seen = new address[](signatures.length);
-
-        for (uint256 i = 0; i < signatures.length; i++) {
-            address signer = userOpHash.toEthSignedMessageHash().recover(signatures[i]);
-            if (isOwner[signer]) {
-                bool duplicate = false;
-                for (uint256 j = 0; j < validCount; j++) {
-                    if (seen[j] == signer) {
-                        duplicate = true;
-                        break;
-                    }
-                }
-                if (!duplicate) {
-                    seen[validCount] = signer;
-                    validCount++;
-                }
-            }
-        }
-
-        require(validCount >= requiredSignatures, "Not enough valid signatures");
+        address signer = userOpHash.toEthSignedMessageHash().recover(signature);
+        require(signer == owner, "Invalid signature");
 
         if (missingFunds > 0) {
             (bool success, ) = payable(msg.sender).call{value: missingFunds}("");
