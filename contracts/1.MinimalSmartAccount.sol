@@ -21,7 +21,7 @@ contract MinimalSmartAccount {
     }
 
     function validateUserOp(
-        bytes calldata userOp,
+        bytes calldata,
         bytes32,
         uint256
     ) external view onlyEntryPoint returns (uint256) {
