@@ -1,4 +1,5 @@
 # Smart Accounts with EIP-4337 ⚡️
+karin.blockdev@gmail.com
 
 이 레포지토리는 **EIP-4337(Account Abstraction)** 을 학습하기 위한 두 가지 스마트 계정 컨트랙트를 포함합니다.  
 - `MinimalSmartAccount.sol` → 최소 구현 (기본 뼈대)  
