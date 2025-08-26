@@ -45,6 +45,81 @@ karin.blockdev@gmail.com
 
 ---
 
+# UserOperation Overview
+
+`UserOperation` is a struct that describes a transaction-like object sent on behalf of a user.
+It is deliberately not called a "transaction" to avoid confusion.
+
+---
+
+## Fields
+
+Similar to a transaction, it contains:
+
+* `to`
+* `calldata`
+* `maxFeePerGas`
+* `maxPriorityFeePerGas`
+* `nonce`
+* `signature` *(defined by the account implementation, not the protocol)*
+
+---
+
+## Components
+
+* **Sender**
+  Smart contract account that initiates the `UserOperation`.
+
+* **EntryPoint**
+  Singleton contract that executes bundled `UserOperations`.
+  Bundlers must whitelist the supported `EntryPoint`.
+
+* **Bundler**
+  Node that collects and submits valid `UserOperations` via `entryPoint.handleOps()`.
+
+  * May also act as a block builder.
+  * If not, it must work with builder infra such as [EIP-7732](https://eips.ethereum.org/EIPS/eip-7732).
+  * Optional experimental RPC: [ERC-7796](https://eips.ethereum.org/EIPS/eip-7796) `eth_sendRawTransactionConditional`.
+
+* **Paymaster**
+  Contract that agrees to pay for gas on behalf of the sender.
+
+* **Factory**
+  Helper contract for deploying new accounts if needed.
+
+* **Aggregator**
+  Approver contract for shared verification of multiple `UserOperations`.
+  Defined in [ERC-7766](https://eips.ethereum.org/EIPS/eip-7766).
+
+---
+
+## Mempool
+
+* **Canonical mempool**
+  Decentralized, permissionless P2P network exchanging valid `UserOperations` that comply with [ERC-7562](https://eips.ethereum.org/EIPS/eip-7562).
+
+* **Alternative mempool**
+  P2P network that applies different validation rules.
+
+---
+
+## Deposit
+
+Ether (or L2 native token) transferred by the account or `Paymaster` to the `EntryPoint`
+to cover future gas costs.
+
+---
+
+## Reference
+
+* [ERC-4337: Account Abstraction](https://eips.ethereum.org/EIPS/eip-4337)
+* [ERC-7562: Canonical mempool](https://eips.ethereum.org/EIPS/eip-7562)
+* [ERC-7766: Aggregators](https://eips.ethereum.org/EIPS/eip-7766)
+* [ERC-7796: Conditional Raw Tx RPC](https://eips.ethereum.org/EIPS/eip-7796)
+
+
+---
+
 ## 📌 Solidity 문법 요약
 
 두 컨트랙트에서 다루는 주요 문법:
