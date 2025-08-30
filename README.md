@@ -4,10 +4,96 @@ karin.blockdev@gmail.com
 이 레포지토리는 **EIP-4337(Account Abstraction)** 을 학습하기 위한 두 가지 스마트 계정 컨트랙트를 포함합니다.  
 - `MinimalSmartAccount.sol` → 최소 구현 (기본 뼈대)  
 - `AdvancedSmartAccount.sol` → 실무 개념 반영 (ECDSA, Paymaster, 멀티시그)  
-
+- 순서: UserOp → Alt-Mempool → EntryPoint.sol → MyAccount.sol → Paymaster.sol → 블록체인
+- 직접 배포/실행 실습 → Node.js + Hardhat(or Foundry) + MetaMask + Sepolia ETH faucet → 전부 필요
 ---
 
-## 📂 Contracts
+# MinimalSmartAccount & AdvancedSmartAccount 실습
+
+## ⚙️ 사전 준비
+- **Node.js**: Hardhat, Foundry 같은 개발 툴 실행 환경
+- **Hardhat (또는 Foundry)**: Solidity 컴파일/배포/테스트 프레임워크
+- **MetaMask**: 테스트넷 계정 관리 (Sepolia 네트워크 추가)
+- **Sepolia ETH faucet**: 테스트용 ETH 받기
+
+<순서 정리>
+Node.js 설치 → Hardhat 프로젝트 초기화
+
+라이브러리 설치 (Hardhat, OpenZeppelin, Account Abstraction)
+
+컨트랙트 작성 → 컴파일 → 테스트
+
+로컬 배포 or Sepolia 테스트넷 배포
+
+MetaMask/Etherscan에서 컨트랙트 확인
+---
+
+## ⚙️ 설치 방법
+
+### 1. Hardhat 프로젝트 초기화 및 설정
+```bash
+npm init -y
+npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox
+npm install @openzeppelin/contracts
+npm install @account-abstraction/contracts
+
+npx hardhat
+```
+### 2. OpenZeppelin (Advanced 버전 필요)
+```bash
+npm install @openzeppelin/contracts
+```
+### 3. Account Abstraction 관련 라이브러리
+```bash
+테스트넷 배포 (Sepolia)
+npx hardhat run scripts/deploy.js --network sepolia
+```
+
+## ⚙️ 실행 방법 (VSCode / Hardhat)
+### 1. 컴파일
+```bash
+npx hardhat compile
+```
+### 2. 테스트 실행
+```bash
+npx hardhat test
+```
+### 3. 로컬 배포 (선택)
+```bash
+# 터미널 1: 로컬 네트워크 실행
+npx hardhat node
+
+# 터미널 2: 로컬 네트워크에 배포
+npx hardhat run scripts/deploy.js --network localhost
+```
+
+### 4. 테스트넷 배포 (Sepolia)
+```bash
+npx hardhat run scripts/deploy.js --network sepolia
+```
+
+### 4. 로컬 배포 테스트
+```bash
+npx hardhat node    # 터미널 1
+npx hardhat run scripts/deploy.js --network localhost   # 터미널 2
+```
+### 5. Sepolia 네트워크 배포 (hardhat.config.js 수정)
+```bash
+require("@nomicfoundation/hardhat-toolbox");
+
+module.exports = {
+  solidity: "0.8.20",
+  networks: {
+    sepolia: {
+      url: "https://sepolia.infura.io/v3/<YOUR_INFURA_KEY>",
+      accounts: ["0x<YOUR_PRIVATE_KEY>"],
+    },
+  },
+};
+```
+```bash
+npx hardhat run scripts/deploy.js --network sepolia
+```
 
 ### 1. MinimalSmartAccount.sol
 4337의 최소 개념을 담은 계정 컨트랙트
@@ -136,30 +222,6 @@ to cover future gas costs.
 - `low-level call` → `dest.call{value: value}(func)`  
 
 ---
-
-## ⚙️ 설치 방법
-
-### 1. Hardhat 프로젝트 초기화
-npm init -y
-npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox
-
-
-2. OpenZeppelin (Advanced 버전에 필요)
-npm install @openzeppelin/contracts
-
-
-## ⚙️ 실행 방법 (VSCode / Hardhat)
-
-컴파일
-npx hardhat compile
-
-
-테스트 실행
-npx hardhat test
-
-로컬 배포 (선택)
-npx hardhat node      # 터미널1: 로컬 네트워크 실행
-npx hardhat run scripts/deploy.js --network localhost   # 터미널2: 배포
 
 📖 참고
 
